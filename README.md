@@ -1,7 +1,7 @@
 # SpaceView                                                                     
 
 
-![](pulsar.png)
+![](Pulsar.png)
 
   A native iOS app for exploring NASA's universe of content. Browse the
   Astronomy Picture of the Day, read the latest space news, search the NASA     
