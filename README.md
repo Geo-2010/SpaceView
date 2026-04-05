@@ -1,5 +1,8 @@
 # SpaceView                                                                     
-                                                                                
+
+
+![](pulsar.png)
+
   A native iOS app for exploring NASA's universe of content. Browse the
   Astronomy Picture of the Day, read the latest space news, search the NASA     
   Image Library, and view live Earth imagery from the DSCOVR satellite — all
