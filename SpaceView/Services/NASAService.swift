@@ -15,7 +15,15 @@ enum NASAServiceError: LocalizedError {
 }
 
 actor NASAService {
-    static let apiKey = "a9cIDeUg4J9xKG36ctqKx3RH0xEhN8pFj0KWnppe"
+    static let apiKey: String = {
+        guard let url = Bundle.main.url(forResource: "Secrets", withExtension: "plist"),
+              let dict = NSDictionary(contentsOf: url),
+              let key = dict["NASA_API_KEY"] as? String,
+              !key.isEmpty,
+              key != "YOUR_KEY_HERE"
+        else { return "DEMO_KEY" }
+        return key
+    }()
 
     // MARK: - APOD
 

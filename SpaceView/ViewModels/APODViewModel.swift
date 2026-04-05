@@ -21,13 +21,31 @@ final class APODViewModel {
     func loadToday() async {
         selectedDate = Date()
         await load(date: nil)
+        // Silently pre-cache the past 30 days in the background
+        let svc = service
+        Task.detached(priority: .background) {
+            await APODCache.shared.prefetch(days: 30, using: svc)
+        }
     }
 
     func load(date: Date?) async {
+        // Serve from disk cache for past dates — today's image can change
+        if let date {
+            let key = Self.isoDate(date)
+            if let cached = APODCache.shared.get(dateKey: key) {
+                entry = cached
+                isLoading = false
+                errorMessage = nil
+                return
+            }
+        }
+
         isLoading = true
         errorMessage = nil
         do {
-            entry = try await service.fetchAPOD(date: date)
+            let fetched = try await service.fetchAPOD(date: date)
+            entry = fetched
+            if let date { APODCache.shared.store(fetched) }
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -55,4 +73,10 @@ final class APODViewModel {
     var isToday: Bool { Calendar.current.isDateInToday(selectedDate) }
     var canGoNext: Bool { !isToday }
     var canGoPrev: Bool { selectedDate > APODViewModel.minDate }
+
+    private static func isoDate(_ date: Date) -> String {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd"
+        return f.string(from: date)
+    }
 }

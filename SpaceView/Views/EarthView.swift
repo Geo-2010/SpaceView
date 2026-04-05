@@ -22,11 +22,20 @@ struct EarthView: View {
                         Spacer()
                         SpaceErrorView(message: error) { Task { await viewModel.load() } }
                         Spacer()
-                    } else if viewModel.selectedPlanet == .earth {
-                        EarthEPICContent(viewModel: viewModel)
                     } else {
-                        PlanetImageGrid(images: viewModel.planetImages, columns: columns, viewModel: viewModel)
-                            .refreshable { await viewModel.load() }
+                        // 3D interactive globe — drag to rotate, pinch to zoom
+                        PlanetView3D(planet: viewModel.selectedPlanet)
+                            .frame(height: 260)
+                            .padding(.horizontal, 16)
+                            .padding(.top, 8)
+                            .padding(.bottom, 4)
+
+                        if viewModel.selectedPlanet == .earth {
+                            EarthEPICContent(viewModel: viewModel)
+                        } else {
+                            PlanetImageGrid(images: viewModel.planetImages, columns: columns, viewModel: viewModel)
+                                .refreshable { await viewModel.load() }
+                        }
                     }
                 }
             }
